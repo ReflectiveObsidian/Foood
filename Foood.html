@@ -155,6 +155,9 @@
       const currentDate = new Date();
       currentDate.setDate(currentDate.getDate() + 1); // Start from tomorrow
 
+      // Store the end date in localStorage
+      localStorage.setItem('endDate', endDate.toISOString());
+      
       let mondayCount = 0;
       let tuesdayCount = 0;
       let wednesdayCount = 0;
@@ -243,7 +246,11 @@
 
     // Call the function with a 5-minute duration (300,000 milliseconds)
     changeBackgroundColorOverTime(300000);
-
+    // Retrieve the end date from localStorage on page load
+    const storedEndDate = localStorage.getItem('endDate');
+    if (storedEndDate) {
+      document.getElementById('endDate').value = new Date(storedEndDate).toISOString().slice(0, 10);
+    }
 
 
 
