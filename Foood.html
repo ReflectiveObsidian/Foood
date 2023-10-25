@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day Count and Meal Credits</title>
+    <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      position: relative; /* Add relative positioning */
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    input[type="date"] {
+      width: calc(100% - 23px); /* Adjusted width */
+      padding: 10px;
+      margin: 5px 0;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+      padding-right: 10px; /* Add right padding */
+    }
+
+    .food {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-color: #f90; /* Food color */
+      border-radius: 50%; /* Round shape */
+      animation: fall 4s linear infinite; /* Falling animation */
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-100px);
+        opacity: 0;
+      }
+      100% {
+        transform: translateY(100vh);
+        opacity: 1;
+      }
+    }
+
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #007bff;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+    <h1>Day Count and Meal Credits</h1>
+    <label for="endDate">Enter End Date:</label>
+    <input type="date" id="endDate" onchange="calculateCounts()">
+    <h2>Credits between tomorrow and end date (inclusive):</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Meal</th>
+            <th>Credits</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Breakfast</td>
+            <td id="breakfastCredits">0</td>
+        </tr>
+        <tr>
+            <td>Dinner</td>
+            <td id="dinnerCredits">0</td>
+        </tr>
+        </tbody>
+    </table>
+    <h2>Counts:</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Day</th>
+            <th>Count</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Monday</td>
+            <td id="mondayCount">0</td>
+        </tr>
+        <tr>
+            <td>Tuesday</td>
+            <td id="tuesdayCount">0</td>
+        </tr>
+        <tr>
+            <td>Wednesday</td>
+            <td id="wednesdayCount">0</td>
+        </tr>
+        <tr>
+            <td>Thursday</td>
+            <td id="thursdayCount">0</td>
+        </tr>
+        <tr>
+            <td>Friday</td>
+            <td id="fridayCount">0</td>
+        </tr>
+        <tr>
+            <td>Saturday</td>
+            <td id="saturdayCount">0</td>
+        </tr>
+        <tr>
+            <td>Sunday</td>
+            <td id="sundayCount">0</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script>
+    function calculateCounts() {
+      const endDateInput = document.getElementById('endDate');
+      const endDate = new Date(endDateInput.value);
+      endDate.setHours(23, 59, 59, 999); // Set the time to the end of the day
+      const currentDate = new Date();
+      currentDate.setDate(currentDate.getDate() + 1); // Start from tomorrow
+
+      let mondayCount = 0;
+      let tuesdayCount = 0;
+      let wednesdayCount = 0;
+      let thursdayCount = 0;
+      let fridayCount = 0;
+      let remainingDays = 0;
+      let sundayCount = 0;
+      let saturdayCount = 0;
+
+      while (currentDate <= endDate) {
+        const dayOfWeek = currentDate.getDay();
+        switch (dayOfWeek) {
+          case 0:
+            sundayCount++;
+            break;
+          case 1:
+            mondayCount++;
+            break;
+          case 2:
+            tuesdayCount++;
+            break;
+          case 3:
+            wednesdayCount++;
+            break;
+          case 4:
+            thursdayCount++;
+            break;
+          case 5:
+            fridayCount++;
+            break;
+          case 6:
+            saturdayCount++;
+            break;
+        }
+        // Create a food element
+        currentDate.setDate(currentDate.getDate() + 1);
+        remainingDays++;
+      }
+
+      let breakfastCredits = remainingDays - sundayCount;
+      let dinnerCredits = remainingDays - saturdayCount;
+
+      document.getElementById('mondayCount').textContent = mondayCount;
+      document.getElementById('tuesdayCount').textContent = tuesdayCount;
+      document.getElementById('wednesdayCount').textContent = wednesdayCount;
+      document.getElementById('thursdayCount').textContent = thursdayCount;
+      document.getElementById('fridayCount').textContent = fridayCount;
+      document.getElementById('breakfastCredits').textContent = breakfastCredits;
+      document.getElementById('dinnerCredits').textContent = dinnerCredits;
+      document.getElementById('sundayCount').textContent = sundayCount;
+      document.getElementById('saturdayCount').textContent = saturdayCount;
+    }
+    function changeBackgroundColorOverTime(duration) {
+      const startColors = [
+        [255, 0, 0],   // Starting color (red in RGB)
+        [0, 255, 0],   // Middle color (green in RGB)
+        [0, 0, 255],   // Ending color (blue in RGB)
+      ];
+
+      const steps = startColors.length * 100; // Number of steps
+      const stepInterval = duration / steps;
+
+      let currentStep = 0;
+
+      const intervalId = setInterval(() => {
+        if (currentStep >= steps) {
+          currentStep = 0; // Reset to repeat the color change
+        }
+        const colorIndex = Math.floor(currentStep / 100);
+        const startColor = startColors[colorIndex];
+        const endColor = startColors[(colorIndex + 1) % startColors.length];
+        const percentage = (currentStep % 100) / 100;
+        const color = calculateColor(startColor, endColor, percentage);
+        document.body.style.backgroundColor = `rgb(${Math.max(150, color[0])}, ${Math.max(150, color[1])}, ${Math.max(150, color[2])})`;
+        currentStep++;
+      }, stepInterval);
+    }
+
+    function calculateColor(startColor, endColor, percentage) {
+      const result = [];
+      for (let i = 0; i < 3; i++) {
+        result[i] = Math.round(startColor[i] + (endColor[i] - startColor[i]) * percentage);
+      }
+      return result;
+    }
+
+    // Call the function with a 5-minute duration (300,000 milliseconds)
+    changeBackgroundColorOverTime(300000);
+
+
+
+
+
+    calculateCounts();
+    document.body.style.backgroundColor = `rgb(${Math.max(150, 255)}, ${Math.max(150, 0)}, ${Math.max(150, 0)})`;
+
+</script>
+</body>
+</html>
